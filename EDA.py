@@ -1,0 +1,118 @@
+# -*- coding: utf-8 -*-
+"""
+@author: akshita
+"""
+# Stage: Importing packages and reading file
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+csv_path = "D:\AKSHITA ONLY\loan_default_project\loan_data.csv"
+df = pd.read_csv(csv_path, low_memory = False)
+
+#%%
+# Stage: Basic sanity checks
+
+df.dtypes
+df.head(10)
+print(df.shape, df['LoanID'].nunique())
+df.nunique().sort_values()
+
+df.isna().any()
+
+#Comment:
+'''No missing values in the dataset.
+'Default' is the binary target variable.
+'LoanID' is a unique identifier.'''
+#%%
+# Stage: Target variable understanding
+
+df['Default'].describe()
+df['Default'].value_counts(dropna=False)
+
+#Comment:
+'''Target variable is moderately imbalanced (11.6% default rate), 
+   which is workable.'''
+
+#%%
+#Stage: Univariate analysis for numeric variables
+
+numeric_vars = [
+'Age', 'Income', 'LoanAmount', 'CreditScore',
+    'MonthsEmployed', 'NumCreditLines',
+    'InterestRate', 'LoanTerm', 'DTIRatio']
+
+for var in numeric_vars:
+    df[var].hist(bins=30)
+    plt.title(f"Distribution of {var}")
+    plt.xlabel(var)
+    plt.ylabel("Count")
+    plt.show()
+
+
+numeric_vars = [
+'Age', 'Income', 'LoanAmount', 'CreditScore',
+    'MonthsEmployed',
+    'InterestRate', 'DTIRatio']
+
+for var in numeric_vars:
+    df['bins'] = pd.qcut(df[var], 10, duplicates='drop')
+    distribution = df.groupby(['bins']).agg({'Default' : 'mean'}).mul(100).round(2)
+    print(f'\n{var}')
+    print(distribution)
+#Comment:
+'''Dataset is evenly sampled; no outlier treatment required.
+The following seem to be likely indicators of default:-
+CreditScore, Income, MonthsEmployed, DTIRatio.
+While Age, InterestRate, and LoanAmount are also likely indicators, 
+    they have been excluded from the model.'''
+        
+#%%
+#Stage: Categorical variable analysis
+
+cat_vars = ["Education", "EmploymentType", "MaritalStatus",
+    "HasMortgage", "HasDependents",
+    "LoanPurpose", "HasCoSigner"]
+
+for var in cat_vars:
+    print(var)
+    print(df[var].value_counts())
+    print("-" * 40)
+
+for var in cat_vars:
+    print(var)
+    print(df.groupby([var]).agg({'Default' : 'mean'}).mul(100).round(2))
+    print("-" * 40)
+
+#Comment:
+'''Default rates vary meaningfully by variables like Education, 
+EmploymentType, MaritalStatus, Mortgage, Dependents, Cosigner, and LoanPurpose.'''
+#%%
+#Stage: Pairwise Correlation
+
+numeric_vars = [
+    'Age', 'Income', 'LoanAmount', 'CreditScore',
+    'MonthsEmployed', 'NumCreditLines',
+    'InterestRate', 'LoanTerm', 'DTIRatio']
+
+corr = df[numeric_vars].corr()
+corr.round(3)                                                                                                        
+
+#Comment:
+'''Weak correlation found among variables.'''
+
+#%%
+# Stage: Observations and conclusion:-
+'''
+# The default rate is 11.6% indicating moderately imbalanced target,
+which is typical of customer lending datasets.
+#Default rates show clear directional relationships with key risk drivers:
+    Higher CreditScore and Income are associated with lower default rates.
+    Higher DTIRatio corresponds to higher default rates.
+    Shorter MonthsEmployed and unstable EmploymentType categories show 
+    higher default risk.
+Several categorical variables (Education, EmploymentType, MaritalStatus, 
+LoanPurpose) exhibit meaningful dispersion in default rates.
+No severe multicollinearity observed and no outlier treatment required.
+No missing values were observed in the dataset.
+'''
