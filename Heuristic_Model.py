@@ -53,6 +53,7 @@ df['Band_MonthsEmployed'] = pd.cut(
 #Stage: Assigning risk points to bands
 
 df['RuleBasedRiskScore'] = 0
+df['RuleBasedRiskScore'] = df['RuleBasedRiskScore'].astype(int)
 
 #Band_CreditScore
 credit_points = {
@@ -62,7 +63,8 @@ credit_points = {
     'Excellent': 0}
 df['RuleBasedRiskScore'] += (df['Band_CreditScore']
                              .map(credit_points)
-                             .fillna(2))
+                             .fillna(2)
+                             .astype(int))
 
 #Band_DTI
 dti_points = {
@@ -71,7 +73,8 @@ dti_points = {
     'High': 3}
 df['RuleBasedRiskScore'] += (df['Band_DTI']
                              .map(dti_points)
-                             .fillna(1))
+                             .fillna(1)
+                             .astype(int))
 
 #Band_Income
 income_points = {
@@ -80,16 +83,18 @@ income_points = {
     'High': 0}
 df['RuleBasedRiskScore'] += (df['Band_Income']
                              .map(income_points)
-                             .fillna(1))
+                             .fillna(1)
+                             .astype(int))
 
 #Band_MonthsEmployed
 emp_len_points = {
     'Short': 2,
     'Medium': 1,
     'Long': 0}
-df['RuleBasedRiskScore'] += (df['Band_MonthsEmployed'].
-                             map(emp_len_points).
-                             fillna(1))
+df['RuleBasedRiskScore'] += (df['Band_MonthsEmployed']
+                             .map(emp_len_points)
+                             .fillna(1)
+                             .astype(int))
 
 #%%
 #Stage: Assigning points for categorical variables
@@ -208,10 +213,10 @@ print(lift)
 limited set of borrower characteristics identified during EDA
 and the variables were discretized into intuitive bands. 
 The resulting risk bands show monotonic separation, 
-with KS of 7% and lift value of 1.23, as expected for a heuristic. 
+with KS of 13% and lift value of 1.25, as expected for a heuristic. 
 These results establish a baseline against which a 
 statistical model can be evaluated.'''
-
+#%%
 
 
 
