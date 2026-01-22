@@ -1,0 +1,1 @@
+This project demonstrates a credit risk segmentation and default prediction workflow using a rule-based heuristic baseline and a logistic regression model, evaluated through risk deciles, KS, lift, and business requirement.
