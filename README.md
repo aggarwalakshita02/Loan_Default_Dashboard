@@ -12,3 +12,11 @@ to assess loan default risk.
 ## Key Results
 - Heuristic model: KS ≈ 13%, Lift ≈ 1.23
 - Logistic regression: KS ≈ 20%, Top-decile Lift ≈ 2.0
+
+## Power BI Dashboard
+An interactive dashboard built on logistic regression outputs to visualize:
+- Risk deciles and monotonic default rates
+- Lift concentration in top deciles
+- Approval vs rejection distribution
+- Predicted PD distribution
+📁 File: `Loan_Default_Risk_Dashboard.pbix`
